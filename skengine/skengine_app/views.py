@@ -11,5 +11,3 @@ def editSketch(request):
     context = {'text_list': text_list}
     return render(request, 'skengine_app/editSketch.html', context)
 
-    """output = [p.txt for p in Text.objects.all()]
-    return HttpResponse(output)"""

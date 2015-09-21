@@ -1,4 +1,10 @@
 {% if text_list %}
+    {% for text in text_list %}
+        <div style="position:fixed; left:{{text.pos_from_centre_X}}; top:{{text.pos_from_centre_Y}}">
+        <p>{{text.txt}}</p>
+        </div>
+    {% endfor %}
+{% else %}
     <ul>
     {% for text in text_list %}
         <li>{{text.txt}}</li>
