@@ -3,20 +3,43 @@ $(document).ready(function(){
 	//----------INITIALISE PAGE----------//
 	// VARIABLES
 	var window_centre = {x: 0, y: 0}; //centre point of window
-	var window_size = {x: 0, y: 0}; //width and height of window 
-	var initSize = function(){
-		window_size.x = 0.95*$(window).width();
-		window_size.y = (1080/1920)*window_size.x;
+	window_centre.x = $(window).width()/2;
+	window_centre.y = $(window).height()/2;
+	var window_size = {x:0, y:0};
+	window_size.x = $(window).width();
+	window_size.y = $(window).height();
 
-		$('.debug').text('DEBUG width: '+window_size.x+', height: '+window_size.y);
+	var numFrames = $(".sketch").children().length+1;
 
-		$(".banner").width(window_size.x);		
-		$(".overlay").width(window_size.x);
-		$(".overlay").height(window_size.y);
-	}
+	$('.debug').text('DEBUG width: '+window_size.x+', height: '+window_size.y);
+	$(".debug").width(window_size.x);		
+	$(".sketch").width(window_size.x);
+	$(".sketch").height(window_size.y);
 
-	initSize();
-	$(window).resize(initSize);
+	$(window).resize(function(){
+		window_size.x = $(window).width();
+		window_size.y = $(window).height();
+		new_centre_x = $(window).width()/2;
+		new_centre_y = $(window).height()/2;
+		$(".debug").width(window_size.x);		
+		$(".sketch").width(window_size.x);
+		$(".sketch").height(window_size.y);
+		$(".container").each(function(){
+			var obj = $(this).parent();
+			var old_pos = obj.position();
+			var reposition = obj.css({
+				'position': 'absolute',
+				'left': (old_pos.left-window_centre.x)+(new_centre_x),
+				'top': 	(old_pos.top-window_centre.y)+(new_centre_y),
+			}); 
+		});
+		window_centre.x = new_centre_x;
+		window_centre.y = new_centre_y;
+		$('.debug').text('DEBUG centre: '+window_centre.x+', '+window_centre.y+'; ');
+		
+	});
+	
+
 
 	//----------EVENTS----------//
 
@@ -39,27 +62,26 @@ $(document).ready(function(){
 	
 
     // Double Clicking on Page
-    var numFrames = 0;
-	$(".overlay").dblclick(function(){
+	$(".sketch").dblclick(function(){
 		// Deletes Selected Frame
 		if ($(".selected").length>0){
 			$(".selected").parent().remove();
 		} else { // Else Creates New Frame
 			jQuery("<div/>", {
 		    	id: numFrames,
-		    	width: 398,
-		    	height: 198
-			}).appendTo(".overlay");
-			$("#"+numFrames).load("box.htm"); // Loads HTML for New Frame
-			
+		    	width: 100,
+		    	height: 100
+			}).appendTo(".sketch");
+			//$("#"+numFrames).load("box.htm"); // Loads HTML for New Frame
+			$("#"+numFrames).html('<div class = "container"><p>Hello</p></div>');
 			//Set Position of New Frame
 			var newFrame = $("#"+numFrames);
 			//newFrame.addClass('ui-widget-content');
-			newFrame
-				//.draggable
-				.resizable({
-					ghost:true
-				});
+			//newFrame
+			//	.draggable;
+				//.resizable({
+					//ghost:true
+				//});
 			var x = currentMousePos.x-(newFrame.width()/2);
 			var y = currentMousePos.y-(newFrame.height()/2);
 			var reposition = newFrame.css({
@@ -72,7 +94,7 @@ $(document).ready(function(){
 			// DEBUG TEXT
 			$('.debug').text('DEBUG pos: '+x+', '+y+'; '+
 					'click: '+currentMousePos.x+', '+currentMousePos.y+'; '+ 
-					newFrame.width() +', '+ newFrame.height() + ', ' + $(".overlay").children().length +
+					newFrame.width() +', '+ newFrame.height() + ', ' + $(".sketch").children().length +
 					', ' + numFrames
 			);
 		}
@@ -80,7 +102,7 @@ $(document).ready(function(){
 
 
 
-/*
+
 	// REDO DRAGGING CODE LOOKING ONLY AT SELECTED CONTAINERS (.container .selected)
 	// BUT REMEMBER THAT NEWER FRAMES WILL BE SELECTED WHEN DRAGGED OVER SO NEED TO COMPENSATE
 	// Start Dragging Frame
@@ -94,14 +116,14 @@ $(document).ready(function(){
 			$(document).on("mousemove",".container",function(event){
 				
 				// Calculate Move Amount and Set Window Bounds
-				var move_left = Math.max($(".overlay").offset().left
+				var move_left = Math.max($(".sketch").offset().left
 					, position.left + event.pageX - e.pageX);
-				move_left = Math.min(($(".overlay").offset().left+window_size.x)-$(this).width()
+				move_left = Math.min(($(".sketch").offset().left+window_size.x)-$(this).width()
 					,move_left); 
 
-				var move_top = Math.max($(".overlay").offset().top
+				var move_top = Math.max($(".sketch").offset().top
 					, position.top + event.pageY - e.pageY);
-				move_top = Math.min(($(".overlay").offset().top+window_size.y)-$(this).height()
+				move_top = Math.min(($(".sketch").offset().top+window_size.y)-$(this).height()
 					, move_top);
 
 
@@ -123,7 +145,7 @@ $(document).ready(function(){
 	});
 	
 	// Stop Dragging Frame
-	$(document).on("mouseup",".overlay",function(e) {
+	$(document).on("mouseup",".sketch",function(e) {
 		$(document).off("mousemove",".container");
 		if(dragging!=null){
 			dragging.css('cursor','auto');
@@ -133,19 +155,19 @@ $(document).ready(function(){
 	});	
 
 
-	*/
+	
 
 
 
 	// ADD BUTTON
 	$(".addbtn").click(function(){
 		remove = "false";
-		$(".overlay").css('cursor', 'auto');
+		$(".sketch").css('cursor', 'auto');
 		$(".container").css('cursor', 'auto');
-		var num = "id"+$(".overlay").children().length;
+		var num = "id"+$(".sketch").children().length;
 		jQuery("<div/>", {
 		    id: num,
-		}).appendTo(".overlay");
+		}).appendTo(".sketch");
 		$("#"+num).load("box.htm");
 	});
 
@@ -154,14 +176,14 @@ $(document).ready(function(){
 	$(".rembtn").click(function(){
 		if(remove=="false"){
 			remove = "true";
-			$(".overlay").css('cursor', 'crosshair');
+			$(".sketch").css('cursor', 'crosshair');
 			$(".container").css('cursor', 'crosshair');
 		} else {
 			remove = "false";
-			$(".overlay").css('cursor', 'auto');
+			$(".sketch").css('cursor', 'auto');
 			$(".container").css('cursor', 'auto');
 		}
-		//var num = "id"+($(".overlay").children().length-1);
+		//var num = "id"+($(".sketch").children().length-1);
 		//$("#"+num).remove();
 	});
 });

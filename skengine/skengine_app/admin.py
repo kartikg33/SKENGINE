@@ -4,7 +4,7 @@ from django.contrib import admin
 from .models import Text, Image, Video, Link
 
 class TextAdmin(admin.ModelAdmin):
-    fields = ['txt']
+    fields = ['txt','pos_from_centre_X', 'pos_from_centre_Y', 'width', 'height']
     list_display = ('txt', 'pos_from_centre_X', 'pos_from_centre_Y', 'width', 'height')
 
 admin.site.register(Text, TextAdmin)

@@ -13,7 +13,7 @@ body{
 	cursor: grab;
 }
 
-.overlay {
+.sketch {
 	display:block;
 	/*width: 50%;
 	height: 50%;
@@ -24,19 +24,19 @@ body{
 	background-color: white;
 }
 
-.overlay .container ul{
+.sketch .container ul{
 	list-style-type: none;
     padding: 0px;
     margin: 0px;
 }
 
-.overlay .container li{
+.sketch .container li{
 	display:inline;
     background-position: 0px center; 
     padding-left: 0px; 
 }
 
-.overlay .container{
+.sketch .container{
 	display:block;
 	width: 300px;
 	height: 100px;

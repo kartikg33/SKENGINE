@@ -20,14 +20,14 @@
 
         </div>
 
-        <div class = "overlay">
-
-        </div>
-
+        <div class = "sketch">
+        
         {% if text_list %}
             {% for text in text_list %}
-                <div style="position:fixed; left:{{text.pos_from_centre_X}}; top:{{text.pos_from_centre_Y}}">
-                <p>{{text.txt}}</p>
+                <div id="{{text.id}}" style="width: {{text.width}}px; height: {{text.height}}px; position: absolute; left: {{text.pos_from_centre_X}}px; top: {{text.pos_from_centre_Y}}px">
+                    <div class = "container">
+                        <p>{{text.txt}}</p>
+                    </div>
                 </div>
             {% endfor %}
         {% else %}
@@ -36,8 +36,9 @@
                 <li>{{text.txt}}</li>
             {% endfor %}
             </ul>
-        {% endif %}   
+        {% endif %} 
         
+        </div>
 
     <script src="{% static 'skengine_app/editSketch.js' %}"></script>
     <!--<script src="box.js"></script>-->
