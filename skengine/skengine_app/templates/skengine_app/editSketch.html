@@ -1,13 +1,49 @@
-{% if text_list %}
-    {% for text in text_list %}
-        <div style="position:fixed; left:{{text.pos_from_centre_X}}; top:{{text.pos_from_centre_Y}}">
-        <p>{{text.txt}}</p>
+<!DOCTYPE html>
+<html>
+    <head>
+        <!--<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.11.3.min.js"></script>-->
+        <!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.js"></script>-->
+        <script type="text/javascript"
+    src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+        <script type="text/javascript"
+    src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.js"></script>
+        <!--<link rel="stylesheet" type="text/css"
+    href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/themes/base/jquery-ui.css"/>-->
+        <link href="http://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel="stylesheet">
+
+
+        <link rel="stylesheet" href="editSketch.css">
+    </head>
+
+    <body>
+
+        <div class = "debug">
+
         </div>
-    {% endfor %}
-{% else %}
-    <ul>
-    {% for text in text_list %}
-        <li>{{text.txt}}</li>
-    {% endfor %}
-    </ul>
-{% endif %}
+
+        <div class = "overlay">
+
+        </div>
+
+        {% if text_list %}
+            {% for text in text_list %}
+                <div style="position:fixed; left:{{text.pos_from_centre_X}}; top:{{text.pos_from_centre_Y}}">
+                <p>{{text.txt}}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <ul>
+            {% for text in text_list %}
+                <li>{{text.txt}}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}   
+        
+
+    <script src="editSketch.js"></script>
+    <!--<script src="box.js"></script>-->
+    </body>
+</html>
+
+
+
