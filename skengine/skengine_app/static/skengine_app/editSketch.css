@@ -38,8 +38,8 @@ body{
 
 .sketch .container{
 	display:block;
-	width: 300px;
-	height: 100px;
+	/*width: 300px;*/
+	/*height: 100px;*/
 	padding:3em;
 	margin:1em;
 	margin-left: auto;
