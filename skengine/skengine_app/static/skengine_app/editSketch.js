@@ -2,12 +2,13 @@
 $(document).ready(function(){
 	//----------INITIALISE PAGE----------//
 	// VARIABLES
-	var window_centre = {x: 0, y: 0}; //centre point of window
-	window_centre.x = $(window).width()/2;
-	window_centre.y = $(window).height()/2;
-	var window_size = {x:0, y:0};
-	window_size.x = $(window).width();
-	window_size.y = $(window).height();
+	var screen_centre = {x:screen.width, y:screen.height};
+	var window_centre = {x: $(window).width()/2, y: $(window).height()/2}; //centre point of window
+	var window_size = {x:$(window).width(), y:$(window).height()};
+	//$('.debug').text('DEBUG width: '+window_size.x+', height: '+window_size.y);
+	$(".debug").width(window_size.x);		
+	$(".sketch").width(window_size.x);
+	$(".sketch").height(window_size.y);
 
 	//Intialise number of frames and their positions
 	var numFrames = $(".sketch").children().length+1;
@@ -23,16 +24,11 @@ $(document).ready(function(){
 		}); 
 	});
 
-	//$('.debug').text('DEBUG width: '+window_size.x+', height: '+window_size.y);
-	$(".debug").width(window_size.x);		
-	$(".sketch").width(window_size.x);
-	$(".sketch").height(window_size.y);
+	
 
 	$(window).resize(function(){
-		window_size.x = $(window).width();
-		window_size.y = $(window).height();
-		new_centre_x = $(window).width()/2;
-		new_centre_y = $(window).height()/2;
+		window_centre = {x: $(window).width()/2, y: $(window).height()/2}; //centre point of window
+		window_size = {x:$(window).width(), y:$(window).height()};
 		$(".debug").width(window_size.x);		
 		$(".sketch").width(window_size.x);
 		$(".sketch").height(window_size.y);
@@ -45,19 +41,8 @@ $(document).ready(function(){
 				'left': posX,
 				'top': 	posY,
 			}); 
-/*
-
-			//var old_pos = obj.position();
-			var reposition = obj.css({
-				'position': 'absolute',
-				'left': (old_pos.left-window_centre.x)+(new_centre_x),
-				'top': 	(old_pos.top-window_centre.y)+(new_centre_y),
-			}); */
 		});
-		window_centre.x = new_centre_x;
-		window_centre.y = new_centre_y;
 		$('.debug').text('DEBUG centre: '+window_centre.x+', '+window_centre.y+'; ');
-		
 	});
 	
 	$('.debug').text('DEBUG screen: '+screen.width+', '+screen.height+'; ');
