@@ -24,8 +24,8 @@
         
         {% if text_list %}
             {% for text in text_list %}
-                <div id="{{text.id}}" style="width: {{text.width}}px; height: {{text.height}}px; position: absolute; left: {{text.pos_from_centre_X}}px; top: {{text.pos_from_centre_Y}}px">
-                    <div class = "container">
+                <div id="{{text.id}}" data-centre-x= "{{text.pos_from_centre_X}}" data-centre-y= "{{text.pos_from_centre_Y}}" style="width: {{text.width}}px; height: {{text.height}}px; left: 0px; top: 0px">
+                    <div class = "container" class = "txt">
                         <p>{{text.txt}}</p>
                     </div>
                 </div>

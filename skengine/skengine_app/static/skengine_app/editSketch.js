@@ -9,9 +9,21 @@ $(document).ready(function(){
 	window_size.x = $(window).width();
 	window_size.y = $(window).height();
 
+	//Intialise number of frames and their positions
 	var numFrames = $(".sketch").children().length+1;
+	
+	$(".container").each(function(){
+		var obj = $(this).parent();
+		var posX = parseFloat(obj.attr("data-centre-x"))+window_centre.x;
+		var posY = parseFloat(obj.attr("data-centre-y"))+window_centre.y;
+		var reposition = obj.css({
+			'position': 'absolute',
+			'left': posX,
+			'top': 	posY,
+		}); 
+	});
 
-	$('.debug').text('DEBUG width: '+window_size.x+', height: '+window_size.y);
+	//$('.debug').text('DEBUG width: '+window_size.x+', height: '+window_size.y);
 	$(".debug").width(window_size.x);		
 	$(".sketch").width(window_size.x);
 	$(".sketch").height(window_size.y);
@@ -26,12 +38,21 @@ $(document).ready(function(){
 		$(".sketch").height(window_size.y);
 		$(".container").each(function(){
 			var obj = $(this).parent();
-			var old_pos = obj.position();
+			var posX = parseFloat(obj.attr("data-centre-x"))+window_centre.x;
+			var posY = parseFloat(obj.attr("data-centre-y"))+window_centre.y;
+			var reposition = obj.css({
+				'position': 'absolute',
+				'left': posX,
+				'top': 	posY,
+			}); 
+/*
+
+			//var old_pos = obj.position();
 			var reposition = obj.css({
 				'position': 'absolute',
 				'left': (old_pos.left-window_centre.x)+(new_centre_x),
 				'top': 	(old_pos.top-window_centre.y)+(new_centre_y),
-			}); 
+			}); */
 		});
 		window_centre.x = new_centre_x;
 		window_centre.y = new_centre_y;
@@ -39,6 +60,7 @@ $(document).ready(function(){
 		
 	});
 	
+	$('.debug').text('DEBUG screen: '+screen.width+', '+screen.height+'; ');
 
 
 	//----------EVENTS----------//
