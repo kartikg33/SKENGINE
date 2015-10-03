@@ -8,8 +8,13 @@ body{
     -webkit-user-select:none;
 }
 
-.selected {
+.hovering {
 	border: 1px dashed #742B32;
+	cursor: grab;
+}
+
+.selected {
+	border: 1px solid #742B32;
 	cursor: grab;
 }
 

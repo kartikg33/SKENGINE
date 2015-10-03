@@ -31,7 +31,7 @@ $(document).ready(function(){
 	//----------EVENTS----------//
 
 	//RESIZE WINDOW
-	$(window).on("resize move",function(){
+	$(window).on("resize",function(){
 		window_pos = {x: window.screenX, y: window.screenY}; //new position of browser
 		
 		//set new sizes of html containers
@@ -64,12 +64,20 @@ $(document).ready(function(){
 
     // Hovering Over Frame
 	$(document).on("mouseover",".container",function() {
-		$(this).addClass('selected'); // Selects Frame
+		$(".hovering").removeClass('hovering'); // All Others Not Hovering
+		$(this).addClass('hovering'); // Hovering
 	});
 
-	// Moving Mouse Out of Frame
-	$(document).on("mouseleave",".selected",function() {
-		$(this).removeClass('selected'); // Deselects Frame
+	// Selecting Frame
+	$(document).on("click", ".hovering", function(){
+		$(".selected").removeClass('selected'); // Deselects Other Frames
+		$(this).addClass('selected'); // Selects This Frame
+		$(this).parent().css('z-index',1);
+	});
+
+	// Not Hovering Over Frame
+	$(document).on("mouseleave",".hovering",function() {
+		$(this).removeClass('hovering'); // Not Hovering
 	});
 	
 
@@ -85,13 +93,6 @@ $(document).ready(function(){
 			//$("#"+numFrames).load("box.htm"); // Loads HTML for New Frame
 			$("#"+numFrames).html('<div class = "container txt"><p>Enter Text</p></div>');
 			var newFrame = $("#"+numFrames);
-			//testing widget functions: resizable, draggable etc.
-			//newFrame.addClass('ui-widget-content');
-			//newFrame
-			//	.draggable;
-				//.resizable({
-					//ghost:true
-				//});
 			//Calculate Position of New Frame
 			var left = currentMousePos.x-100;
 			var top = currentMousePos.y-100;
@@ -124,27 +125,25 @@ $(document).ready(function(){
 	});  
 
 
-	// FRAME EVENTS
-
 	// Start Dragging Frame
 	var dragging = null; // Pointer to Frame being Dragged
-	$(document).on("mousedown",".container",function(e) {
+	$(document).on("mousedown",".selected",function(e) {
 		if(dragging==null){ // Only Drag One Frame At A Time
-			dragging=$(this);	//to prevent other elements from being moved
-			var position = $(this).offset();
+			var dragging=$(this);	//to prevent other elements from being moved
+			var position = $(this).position();
 			dragging.css('cursor','move');
 		
-			$(document).on("mousemove",".container",function(event){
+			$(document).on("mousemove",".selected",function(event){
 				
 				// Calculate Move Amount and Set Window Bounds
-				var move_left = Math.max($(".sketch").offset().left
+				var move_left = Math.max($(".sketch").position().left
 					, position.left + event.pageX - e.pageX);
-				move_left = Math.min(($(".sketch").offset().left+$(window).width())-$(this).width()
-					,move_left); 
+				move_left = Math.min(($(".sketch").position().left+$(window).width())-$(this).width()
+					, move_left); 
 
-				var move_top = Math.max($(".sketch").offset().top
+				var move_top = Math.max($(".sketch").position().top
 					, position.top + event.pageY - e.pageY);
-				move_top = Math.min(($(".sketch").offset().top+$(window).height())-$(this).height()
+				move_top = Math.min(($(".sketch").position().top+$(window).height())-$(this).height()
 					, move_top);
 
 				//Set new position
@@ -156,9 +155,9 @@ $(document).ready(function(){
 				var posX = move_left - screen_centre.x + window_pos.x;
 				var posY = move_top - screen_centre.y + window_pos.y;
 				dragging.parent().attr({
-				'data-centre-x': posX,
-				'data-centre-y': posY
-			});
+					'data-centre-x': posX,
+					'data-centre-y': posY
+				});
 
 				// DEBUG TEXT
 				$('.debug').text('DEBUG pos: '+position.left+', '+position.top+'; '+
@@ -170,19 +169,17 @@ $(document).ready(function(){
 			});
 		} //if(dragging==null)	
 	});
-	
+
 	// Stop Dragging Frame
 	$(document).on("mouseup",".sketch",function(e) {
-		$(document).off("mousemove",".container");
+		$(document).off("mousemove",".selected");
 		if(dragging!=null){
 			dragging.css('cursor','auto');
+			//$(this).css('cursor','auto');
 		}
 		dragging = null;
 		$('.debug').text('DEBUG '+dragging);
 	});	
-
-
-	
 
 	// BUTTON EVENTS
 
