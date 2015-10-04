@@ -77,15 +77,12 @@ $(document).ready(function(){
 		$(this).parent().css('z-index',1);
 	});
 
-	
-	
-
     // Double Clicking on Page Adds Frame, On Hovering Deletes Frame
 	$(document).dblclick(function(){
 		// Deletes Selected Frame
-		if ($(".hovering").length>0){
-			$(".hovering").parent().remove();
-		} else { // Else Creates New Frame
+		if ($(".selected").length>0){
+			$(".selected").parent().remove();
+		} else if ($(".hovering").length==0){ // Else Creates New Frame*/
 			//Update No. Frames
 			numFrames = numFrames + 1;
 			//Create New HTML
@@ -118,6 +115,7 @@ $(document).ready(function(){
 			}); 
 			//Update Body Data
 			$("body").attr('data-num-frames', numFrames);
+			save_frames(numFrames);
 		} //end else
 	});  
 
@@ -161,27 +159,32 @@ $(document).ready(function(){
 		$(document).off("mousemove");
 		$(document).mousemove(readMouse);
 		$(".selected").css('cursor','auto');
-		/*$.post('/edit', {'id': $(".selected").parent().id}, function(data, textStatus, xhr) {
-			//optional stuff to do after success 
-		});*/
+		save_frames(parseInt($(".selected").parent().attr('id')));
+		$(".selected").parent().css('z-index',0);
+		$(".selected").removeClass('selected');
 	});	
 
+	// Save Button saves all frames
 	$("#saveButton").on('click', function(event) {
 		event.preventDefault();
 		console.log("Save Button Pressed")
-		save_frames();
+		save_frames(1, numFrames);
 	});
 
-	function save_frames(){
-		console.log("Saving Frames")
-		console.log(numFrames);
-		for(var frame = 1; frame <= numFrames; frame++){
+	function save_frames(startFrame, endFrame){
+		console.log("Saving Frames")	
+		if (arguments.length == 1){
+			endFrame = startFrame;
+		}
+		console.log(startFrame + " -> " + endFrame)
+		for(var frame = startFrame; frame <= endFrame; frame++){
 			console.log(frame)
 			if($("#"+frame).length>0){
 				$.ajax({
 					url: ".",
 					type: 'POST',
 					data: {
+						task: "save",
 						id: frame, 
 						posX: $("#"+frame).attr('data-centre-x'), 
 						posY: $("#"+frame).attr('data-centre-y'),
@@ -189,20 +192,9 @@ $(document).ready(function(){
 						height: $("#"+frame).height(),
 						text: $("#"+frame+" .txt").html()
 					},
-					/*success : function(json){
-						console.log(json);
-						console.log("Saved " + frame);
-					},
-					
-					error : function(xhr,errmsg,err) {
-	            		$('.debug').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
-	               		 " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
-	            		console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-	        		}*/
 				});
 			}
 		}
-		
 	};
 
 
