@@ -11,7 +11,7 @@ $(document).ready(function(){
 	$(".debug").height(0);	
 
 	//Initialise number of frames
-	var numFrames = parseInt($("body").attr("data-num-frames"))+1;
+	var numFrames = parseInt($("body").attr("data-num-frames"));
 	//Initialise positions of each frame
 	$(".container").each(function(){
 		var obj = $(this).parent();
@@ -86,6 +86,9 @@ $(document).ready(function(){
 		if ($(".hovering").length>0){
 			$(".hovering").parent().remove();
 		} else { // Else Creates New Frame
+			//Update No. Frames
+			numFrames = numFrames + 1;
+			//Create New HTML
 			jQuery("<div/>", {
 		    	id: numFrames
 			}).appendTo("body");
@@ -113,7 +116,8 @@ $(document).ready(function(){
 				'z-index': 0,
 				'position': 'fixed'
 			}); 
-			numFrames = numFrames + 1;
+			//Update Body Data
+			$("body").attr('data-num-frames', numFrames);
 		} //end else
 	});  
 
