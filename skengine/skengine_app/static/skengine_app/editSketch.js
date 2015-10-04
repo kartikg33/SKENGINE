@@ -81,6 +81,7 @@ $(document).ready(function(){
 	$(document).dblclick(function(){
 		// Deletes Selected Frame
 		if ($(".selected").length>0){
+			delete_frame(parseInt($(".selected").parent().attr('id')));
 			$(".selected").parent().remove();
 		} else if ($(".hovering").length==0){ // Else Creates New Frame*/
 			//Update No. Frames
@@ -115,7 +116,7 @@ $(document).ready(function(){
 			}); 
 			//Update Body Data
 			$("body").attr('data-num-frames', numFrames);
-			save_frames(numFrames);
+			save_frame(numFrames);
 		} //end else
 	});  
 
@@ -159,43 +160,42 @@ $(document).ready(function(){
 		$(document).off("mousemove");
 		$(document).mousemove(readMouse);
 		$(".selected").css('cursor','auto');
-		save_frames(parseInt($(".selected").parent().attr('id')));
+		save_frame(parseInt($(".selected").parent().attr('id')));
 		$(".selected").parent().css('z-index',0);
 		$(".selected").removeClass('selected');
 	});	
 
-	// Save Button saves all frames
-	$("#saveButton").on('click', function(event) {
-		event.preventDefault();
-		console.log("Save Button Pressed")
-		save_frames(1, numFrames);
-	});
-
-	function save_frames(startFrame, endFrame){
-		console.log("Saving Frames")	
-		if (arguments.length == 1){
-			endFrame = startFrame;
-		}
-		console.log(startFrame + " -> " + endFrame)
-		for(var frame = startFrame; frame <= endFrame; frame++){
-			console.log(frame)
-			if($("#"+frame).length>0){
-				$.ajax({
-					url: ".",
-					type: 'POST',
-					data: {
-						task: "save",
-						id: frame, 
-						posX: $("#"+frame).attr('data-centre-x'), 
-						posY: $("#"+frame).attr('data-centre-y'),
-						width: $("#"+frame).width(),
-						height: $("#"+frame).height(),
-						text: $("#"+frame+" .txt").html()
-					},
-				});
-			}
+	function save_frame(frame){
+		if(!isNaN(frame)){
+			console.log("Saving Frame " + frame)	
+			$.ajax({
+				url: ".",
+				type: 'POST',
+				data: {
+					task: "save",
+					id: frame, 
+					posX: $("#"+frame).attr('data-centre-x'), 
+					posY: $("#"+frame).attr('data-centre-y'),
+					width: $("#"+frame).width(),
+					height: $("#"+frame).height(),
+					text: $("#"+frame+" .txt").html()
+				},
+			});	
 		}
 	};
+
+	function delete_frame(frame){
+		console.log("Deleting Frame " + frame)	
+		$.ajax({
+			url: ".",
+			type: 'POST',
+			data: {
+				task: "delete",
+				id: frame, 
+			},
+		});
+	};
+
 
 
 	function getCookie(name) {
