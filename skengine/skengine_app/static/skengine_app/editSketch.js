@@ -6,13 +6,12 @@ $(document).ready(function(){
 	var window_pos = {x: window.screenX, y: window.screenY+window.outerHeight-window.innerHeight}; //position of browser on screen
 
 	//----------INITIALISE PAGE----------//
-
 	//set sizes of html containers
 	$(".debug").width(window.width);	
 	$(".debug").height(0);	
 
 	//Initialise number of frames
-	var numFrames = $("body").children().length+1;
+	var numFrames = parseInt($("body").attr("data-num-frames"))+1;
 	//Initialise positions of each frame
 	$(".container").each(function(){
 		var obj = $(this).parent();
@@ -158,7 +157,20 @@ $(document).ready(function(){
 		$(document).off("mousemove");
 		$(document).mousemove(readMouse);
 		$(".selected").css('cursor','auto');
+		/*$.post('/edit', {'id': $(".selected").parent().id}, function(data, textStatus, xhr) {
+			//optional stuff to do after success 
+		});*/
 	});	
 
+	$("#saveButton").on('click', function(event) {
+		event.preventDefault();
+		console.log("Save Button Pressed")
+		save_frames();
+	});
+
+	function save_frames(){
+		console.log("Saving Frames")
+		console.log(numFrames);
+	};
 	
 });
