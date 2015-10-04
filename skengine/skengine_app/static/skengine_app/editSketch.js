@@ -65,6 +65,7 @@ $(document).ready(function(){
 
 	// Selecting Frame
 	$(document).on("click", ".hovering", function(){
+		$(".selected").parent().css('z-index',0);
 		$(".selected").removeClass('selected'); // Deselects Other Frames
 		$(this).addClass('selected'); // Selects This Frame
 		$(this).parent().css('z-index',1);
@@ -76,47 +77,47 @@ $(document).ready(function(){
 	});
 	
 
-	// Double Clicking on Selected Deletes It
-	$(".selected").dblclick(function(event) {
-		$(this).parent().remove();
-	});
-
-    // Double Clicking on Page Adds Frame
+    // Double Clicking on Page Adds Frame, On Hovering Deletes Frame
 	$(document).dblclick(function(){
-		jQuery("<div/>", {
-	    	id: numFrames
-		}).appendTo("body");
-		//$("#"+numFrames).load("box.htm"); // Loads HTML for New Frame
-		$("#"+numFrames).html('<div class = "container txt"><p>Enter Text</p></div>');
-		var newFrame = $("#"+numFrames);
-		//Calculate Position of New Frame
-		var left = currentMousePos.x-100;
-		var top = currentMousePos.y-100;
-		//Calculate Position from Centre
-		var posX = left - screen_centre.x + window_pos.x;
-		var posY = top - screen_centre.y + window_pos.y;
-		newFrame.attr({
-			'data-centre-x': posX,
-			'data-centre-y': posY
-		});
-		//Set Position of New Frame
-		newFrame.css({
-			'width': '200px',
-			'height': '200px',
-			'left': left,
-			'top': 	top,
-			'position': 'fixed'
-		}); 
-		
-		numFrames = numFrames + 1;
+		// Deletes Selected Frame
+		if ($(".hovering").length>0){
+			$(".hovering").parent().remove();
+		} else { // Else Creates New Frame
+			jQuery("<div/>", {
+		    	id: numFrames
+			}).appendTo("body");
+			//$("#"+numFrames).load("box.htm"); // Loads HTML for New Frame
+			$("#"+numFrames).html('<div class = "container txt"><p>Enter Text</p></div>');
+			var newFrame = $("#"+numFrames);
+			//Calculate Position of New Frame
+			var left = currentMousePos.x-100;
+			var top = currentMousePos.y-100;
+			//Calculate Position from Centre
+			var posX = left - screen_centre.x + window_pos.x;
+			var posY = top - screen_centre.y + window_pos.y;
+			newFrame.attr({
+				'data-centre-x': posX,
+				'data-centre-y': posY
+			});
+			//Set Position of New Frame
+			newFrame.css({
+				'width': '200px',
+				'height': '200px',
+				'left': left,
+				'top': 	top,
+				'position': 'fixed'
+			}); 
+			
+			numFrames = numFrames + 1;
 
-		/*
-		// DEBUG TEXT
-		$('.debug').text('DEBUG pos: '+x+', '+y+'; '+
-				'click: '+currentMousePos.x+', '+currentMousePos.y+'; '+ 
-				newFrame.width() +', '+ newFrame.height() + ', ' + $(".sketch").children().length +
-				', ' + numFrames
-		);*/
+			/*
+			// DEBUG TEXT
+			$('.debug').text('DEBUG pos: '+x+', '+y+'; '+
+					'click: '+currentMousePos.x+', '+currentMousePos.y+'; '+ 
+					newFrame.width() +', '+ newFrame.height() + ', ' + $(".sketch").children().length +
+					', ' + numFrames
+			);*/
+		} //end else
 	});  
 
 
@@ -128,21 +129,7 @@ $(document).ready(function(){
 			var position = $(this).offset();
 			dragging.css('cursor','move');
 		
-			$(document).on("mousemove",".selected",function(event){
-				
-				// Calculate Move Amount and Set Window Bounds
-				/*
-				var move_left = Math.max($(".sketch").offset().left
-					, position.left + event.pageX - e.pageX);
-				move_left = Math.min(($(".sketch").offset().left+$(window).width())-$(this).width()
-					, move_left); 
-
-				var move_top = Math.max($(".sketch").offset().top
-					, position.top + event.pageY - e.pageY);
-				move_top = Math.min(($(".sketch").offset().top+$(window).height())-$(this).height()
-					, move_top);
-				*/
-
+			$(document).on("mousemove",function(event){
 
 				var move_left = position.left + event.pageX - e.pageX;
 				var move_top = position.top + event.pageY - e.pageY;
@@ -172,8 +159,8 @@ $(document).ready(function(){
 	});
 
 	// Stop Dragging Frame
-	$(document).on("mouseup",document,function(e) {
-		$(document).off("mousemove",".selected");
+	$(document).on("mouseup",function(e) {
+		$(document).off("mousemove");
 		if(dragging!=null){
 			dragging.css('cursor','auto');
 			//$(this).css('cursor','auto');
