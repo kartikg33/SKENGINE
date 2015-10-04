@@ -15,7 +15,7 @@
         <div class = "debug">
             <p>DEBUG {{error_message}}</p>
         </div>
-
+        <form action="." method="post">
         {% csrf_token %}
         <button type="text" id="saveButton">SAVE</button>
         {% if text_list %}
@@ -27,7 +27,7 @@
                 </div>
             {% endfor %}
         {% endif %} 
-
+        </form>
         
 
     

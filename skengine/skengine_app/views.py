@@ -14,7 +14,28 @@ logger = logging.getLogger(__name__)
 def editSketch(request):
     text_list = Text.objects.all()
     num_frames = len(text_list)
-
     context = {'text_list': text_list, 'num_frames': num_frames}
+    
     return render(request, 'skengine_app/editSketch.html', context)
 
+def saveSketch(request):
+	if request.method == 'POST':
+   		post_id = request.POST.get('id')
+    	post_posX = request.POST.get('posX')
+    	post_posY = request.POST.get('posY')
+
+    	response_data={}
+
+    	return render(request, 'skengine_app/editSketch.html')
+
+    	'''
+    	return HttpResponse(
+            json.dumps(response_data),
+            content_type="application/json"
+        )
+
+   	else:
+        return HttpResponse(
+            json.dumps({"nothing to see": "this isn't happening"}),
+            content_type="application/json"
+        )'''
