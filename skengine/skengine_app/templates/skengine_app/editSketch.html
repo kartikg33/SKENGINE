@@ -9,25 +9,26 @@
         {% load staticfiles %}
         <link rel="stylesheet" type="text/css" href="{% static 'skengine_app/editSketch.css' %}">
         <script src="{% static 'skengine_app/editSketch.js' %}"></script>
+        {% csrf_token %}
     </head>
 
     <body data-num-frames = "{{num_frames}}">
         <div class = "debug">
             <p>DEBUG {{error_message}}</p>
         </div>
-        <form action="." method="post">
-        {% csrf_token %}
+        
         <button type="text" id="saveButton">SAVE</button>
         {% if text_list %}
             {% for text in text_list %}
                 <div id="{{text.id}}" data-centre-x= "{{text.pos_from_centre_X}}" data-centre-y= "{{text.pos_from_centre_Y}}" style="width: {{text.width}}px; height: {{text.height}}px; left: 0px; top: 0px; z-index:0; position: fixed">
                     <div class = "container txt">
-                        <p>{{text.txt}}</p>
+                        {% autoescape off %}
+                        {{text.txt}}
+                        {% endautoescape %}
                     </div>
                 </div>
             {% endfor %}
         {% endif %} 
-        </form>
         
 
     

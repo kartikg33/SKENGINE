@@ -23,19 +23,21 @@ def saveSketch(request):
    		post_id = request.POST.get('id')
     	post_posX = request.POST.get('posX')
     	post_posY = request.POST.get('posY')
+        post_width = request.POST.get('width')
+        post_height = request.POST.get('height')
+        post_text = request.POST.get('text')
+    	
 
-    	response_data={}
+        try:
+            frame = Text.objects.get(id=post_id)
+        except:
+            frame = Text.objects.create(id=post_id)
+        else:     
+            frame.pos_from_centre_X = post_posX
+            frame.pos_from_centre_Y = post_posY
+            frame.width = post_width
+            frame.height = post_height
+            frame.txt = post_text
+            frame.save()
 
     	return render(request, 'skengine_app/editSketch.html')
-
-    	'''
-    	return HttpResponse(
-            json.dumps(response_data),
-            content_type="application/json"
-        )
-
-   	else:
-        return HttpResponse(
-            json.dumps({"nothing to see": "this isn't happening"}),
-            content_type="application/json"
-        )'''

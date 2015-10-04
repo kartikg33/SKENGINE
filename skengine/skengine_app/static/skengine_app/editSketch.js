@@ -177,21 +177,30 @@ $(document).ready(function(){
 		console.log(numFrames);
 		for(var frame = 1; frame <= numFrames; frame++){
 			console.log(frame)
-			$.ajax({
-				url: "saved/",
-				type: 'POST',
-				data: {id: frame, posX: $("#"+frame).attr('data-centre-x'), posY: $("#"+frame).attr('data-centre-y')},
-				success : function(json){
-					console.log(json);
-					console.log("Saved " + frame);
-				},
-				/*
-				error : function(xhr,errmsg,err) {
-            		$('.debug').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
-               		 " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
-            		console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-        		}*/
-			});
+			if($("#"+frame).length>0){
+				$.ajax({
+					url: ".",
+					type: 'POST',
+					data: {
+						id: frame, 
+						posX: $("#"+frame).attr('data-centre-x'), 
+						posY: $("#"+frame).attr('data-centre-y'),
+						width: $("#"+frame).width(),
+						height: $("#"+frame).height(),
+						text: $("#"+frame+" .txt").html()
+					},
+					/*success : function(json){
+						console.log(json);
+						console.log("Saved " + frame);
+					},
+					
+					error : function(xhr,errmsg,err) {
+	            		$('.debug').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+	               		 " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+	            		console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+	        		}*/
+				});
+			}
 		}
 		
 	};
