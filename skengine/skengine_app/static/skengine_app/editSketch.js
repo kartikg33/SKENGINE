@@ -21,7 +21,6 @@ $(document).ready(function(){
 		var posX = parseFloat(obj.attr("data-centre-x")) + screen_centre.x - window_pos.x;
 		var posY = parseFloat(obj.attr("data-centre-y")) + screen_centre.y - window_pos.y;
 		obj.css({
-			'position': 'absolute',
 			'left': posX,
 			'top': 	posY,
 		});
@@ -46,7 +45,6 @@ $(document).ready(function(){
 			var posX = parseFloat(obj.attr("data-centre-x"))+screen_centre.x - window_pos.x;
 			var posY = parseFloat(obj.attr("data-centre-y"))+screen_centre.y - window_pos.y;
 			obj.css({
-				'position': 'absolute',
 				'left': posX,
 				'top': 	posY,
 			}); 
@@ -109,7 +107,7 @@ $(document).ready(function(){
 				'height': '200px',
 				'left': left,
 				'top': 	top,
-				'position': 'absolute'
+				'position': 'fixed'
 			}); 
 			
 			numFrames = numFrames + 1;
@@ -130,20 +128,20 @@ $(document).ready(function(){
 	$(document).on("mousedown",".selected",function(e) {
 		if(dragging==null){ // Only Drag One Frame At A Time
 			var dragging=$(this);	//to prevent other elements from being moved
-			var position = $(this).position();
+			var position = $(this).offset();
 			dragging.css('cursor','move');
 		
 			$(document).on("mousemove",".selected",function(event){
 				
 				// Calculate Move Amount and Set Window Bounds
-				var move_left = Math.max($(".sketch").position().left
+				var move_left = Math.max($(".sketch").offset().left
 					, position.left + event.pageX - e.pageX);
-				move_left = Math.min(($(".sketch").position().left+$(window).width())-$(this).width()
+				move_left = Math.min(($(".sketch").offset().left+$(window).width())-$(this).width()
 					, move_left); 
 
-				var move_top = Math.max($(".sketch").position().top
+				var move_top = Math.max($(".sketch").offset().top
 					, position.top + event.pageY - e.pageY);
-				move_top = Math.min(($(".sketch").position().top+$(window).height())-$(this).height()
+				move_top = Math.min(($(".sketch").offset().top+$(window).height())-$(this).height()
 					, move_top);
 
 				//Set new position
