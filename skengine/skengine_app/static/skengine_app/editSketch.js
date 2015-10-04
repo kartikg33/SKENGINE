@@ -3,18 +3,16 @@ $(document).ready(function(){
 	
 	// GLOBAL VARIABLES
 	var screen_centre = {x: screen.width/2, y: screen.height/2}; //centre of screen display
-	var window_pos = {x: window.screenX, y: window.screenY}; //position of browser on screen
+	var window_pos = {x: window.screenX, y: window.screenY+window.outerHeight-window.innerHeight}; //position of browser on screen
 
 	//----------INITIALISE PAGE----------//
 
 	//set sizes of html containers
-	$(".debug").width($(window).width());	
+	$(".debug").width(window.width);	
 	$(".debug").height(0);	
-	$(".sketch").width($(window).width());
-	$(".sketch").height($(window).height());
 
 	//Initialise number of frames
-	var numFrames = $(".sketch").children().length+1;
+	var numFrames = 5;//$(document).children().length+1;
 	//Initialise positions of each frame
 	$(".container").each(function(){
 		var obj = $(this).parent();
@@ -31,13 +29,12 @@ $(document).ready(function(){
 
 	//RESIZE WINDOW
 	$(window).on("resize",function(){
-		window_pos = {x: window.screenX, y: window.screenY}; //new position of browser
+		window_pos = {x: window.screenX, y: window.screenY+window.outerHeight-window.innerHeight}; //new position of browser
 		
 		//set new sizes of html containers
-		$(".debug").width($(window).width());	
+		$(".debug").width(window.width);	
 		$(".debug").height(0);	
-		$(".sketch").width($(window).width());
-		$(".sketch").height($(window).height());
+
 
 		//Set new positions of each frame
 		$(".container").each(function(){
@@ -79,47 +76,47 @@ $(document).ready(function(){
 	});
 	
 
-    // Double Clicking on Page
-	$(".sketch").dblclick(function(){
-		// Deletes Selected Frame
-		if ($(".selected").length>0){
-			$(".selected").parent().remove();
-		} else { // Else Creates New Frame
-			jQuery("<div/>", {
-		    	id: numFrames
-			}).appendTo(".sketch");
-			//$("#"+numFrames).load("box.htm"); // Loads HTML for New Frame
-			$("#"+numFrames).html('<div class = "container txt"><p>Enter Text</p></div>');
-			var newFrame = $("#"+numFrames);
-			//Calculate Position of New Frame
-			var left = currentMousePos.x-100;
-			var top = currentMousePos.y-100;
-			//Calculate Position from Centre
-			var posX = left - screen_centre.x + window_pos.x;
-			var posY = top - screen_centre.y + window_pos.y;
-			newFrame.attr({
-				'data-centre-x': posX,
-				'data-centre-y': posY
-			});
-			//Set Position of New Frame
-			newFrame.css({
-				'width': '200px',
-				'height': '200px',
-				'left': left,
-				'top': 	top,
-				'position': 'fixed'
-			}); 
-			
-			numFrames = numFrames + 1;
+	// Double Clicking on Selected Deletes It
+	$(".selected").dblclick(function(event) {
+		$(this).parent().remove();
+	});
 
-			/*
-			// DEBUG TEXT
-			$('.debug').text('DEBUG pos: '+x+', '+y+'; '+
-					'click: '+currentMousePos.x+', '+currentMousePos.y+'; '+ 
-					newFrame.width() +', '+ newFrame.height() + ', ' + $(".sketch").children().length +
-					', ' + numFrames
-			);*/
-		} //end else
+    // Double Clicking on Page Adds Frame
+	$(document).dblclick(function(){
+		jQuery("<div/>", {
+	    	id: numFrames
+		}).appendTo("body");
+		//$("#"+numFrames).load("box.htm"); // Loads HTML for New Frame
+		$("#"+numFrames).html('<div class = "container txt"><p>Enter Text</p></div>');
+		var newFrame = $("#"+numFrames);
+		//Calculate Position of New Frame
+		var left = currentMousePos.x-100;
+		var top = currentMousePos.y-100;
+		//Calculate Position from Centre
+		var posX = left - screen_centre.x + window_pos.x;
+		var posY = top - screen_centre.y + window_pos.y;
+		newFrame.attr({
+			'data-centre-x': posX,
+			'data-centre-y': posY
+		});
+		//Set Position of New Frame
+		newFrame.css({
+			'width': '200px',
+			'height': '200px',
+			'left': left,
+			'top': 	top,
+			'position': 'fixed'
+		}); 
+		
+		numFrames = numFrames + 1;
+
+		/*
+		// DEBUG TEXT
+		$('.debug').text('DEBUG pos: '+x+', '+y+'; '+
+				'click: '+currentMousePos.x+', '+currentMousePos.y+'; '+ 
+				newFrame.width() +', '+ newFrame.height() + ', ' + $(".sketch").children().length +
+				', ' + numFrames
+		);*/
 	});  
 
 
@@ -134,6 +131,7 @@ $(document).ready(function(){
 			$(document).on("mousemove",".selected",function(event){
 				
 				// Calculate Move Amount and Set Window Bounds
+				/*
 				var move_left = Math.max($(".sketch").offset().left
 					, position.left + event.pageX - e.pageX);
 				move_left = Math.min(($(".sketch").offset().left+$(window).width())-$(this).width()
@@ -143,6 +141,11 @@ $(document).ready(function(){
 					, position.top + event.pageY - e.pageY);
 				move_top = Math.min(($(".sketch").offset().top+$(window).height())-$(this).height()
 					, move_top);
+				*/
+
+
+				var move_left = position.left + event.pageX - e.pageX;
+				var move_top = position.top + event.pageY - e.pageY;
 
 				//Set new position
 				dragging.parent().css({	//only moves what is being dragged, not others by accident.
@@ -169,7 +172,7 @@ $(document).ready(function(){
 	});
 
 	// Stop Dragging Frame
-	$(document).on("mouseup",".sketch",function(e) {
+	$(document).on("mouseup",document,function(e) {
 		$(document).off("mousemove",".selected");
 		if(dragging!=null){
 			dragging.css('cursor','auto');
