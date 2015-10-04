@@ -12,7 +12,7 @@ $(document).ready(function(){
 	$(".debug").height(0);	
 
 	//Initialise number of frames
-	var numFrames = 5;//$(document).children().length+1;
+	var numFrames = $("body").children().length+1;
 	//Initialise positions of each frame
 	$(".container").each(function(){
 		var obj = $(this).parent();
@@ -52,15 +52,22 @@ $(document).ready(function(){
 
 	// Variables to store Mouse Position
 	var currentMousePos = { x: 0, y: 0 };
-    $(document).mousemove(function(event) {
+    $(document).mousemove(readMouse);
+
+    function readMouse(event) {
         currentMousePos.x = event.pageX;
         currentMousePos.y = event.pageY;
-    });
+    };
 
     // Hovering Over Frame
 	$(document).on("mouseover",".container",function() {
-		$(".hovering").removeClass('hovering'); // All Others Not Hovering
+		//$(".hovering").removeClass('hovering'); // All Others Not Hovering
 		$(this).addClass('hovering'); // Hovering
+	});
+
+	// Not Hovering Over Frame
+	$(document).on("mouseleave",".hovering",function() {
+		$(this).removeClass('hovering'); // Not Hovering
 	});
 
 	// Selecting Frame
@@ -71,10 +78,7 @@ $(document).ready(function(){
 		$(this).parent().css('z-index',1);
 	});
 
-	// Not Hovering Over Frame
-	$(document).on("mouseleave",".hovering",function() {
-		$(this).removeClass('hovering'); // Not Hovering
-	});
+	
 	
 
     // Double Clicking on Page Adds Frame, On Hovering Deletes Frame
@@ -107,6 +111,7 @@ $(document).ready(function(){
 				'height': '200px',
 				'left': left,
 				'top': 	top,
+				'z-index': 0,
 				'position': 'fixed'
 			}); 
 			numFrames = numFrames + 1;
@@ -151,6 +156,7 @@ $(document).ready(function(){
 	// Stop Dragging Frame
 	$(document).on("mouseup",function(e) {
 		$(document).off("mousemove");
+		$(document).mousemove(readMouse);
 		$(".selected").css('cursor','auto');
 	});	
 
