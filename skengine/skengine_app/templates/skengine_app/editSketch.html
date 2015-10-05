@@ -8,11 +8,12 @@
         <link href="http://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel="stylesheet">
         {% load staticfiles %}
         <link rel="stylesheet" type="text/css" href="{% static 'skengine_app/editSketch.css' %}">
+        <script src="{% static 'skengine_app/jeditable.js' %}"></script>
         <script src="{% static 'skengine_app/editSketch.js' %}"></script>
-        {% csrf_token %}
+        
     </head>
 
-    <body data-num-frames = "{{num_frames}}">
+    <body data-num-frames = "{{num_frames}}">{% csrf_token %} <!--token needs to be in body-->
         <div class = "debug">
             <p>DEBUG {{error_message}}</p>
         </div>
@@ -20,7 +21,7 @@
         {% if text_list %}
             {% for text in text_list %}
                 <div id="{{text.id}}" data-centre-x= "{{text.pos_from_centre_X}}" data-centre-y= "{{text.pos_from_centre_Y}}" style="width: {{text.width}}px; height: {{text.height}}px; left: 0px; top: 0px; z-index:0; position: fixed">
-                    <div class = "container txt">
+                    <div class = "container edit txt">
                         {% autoescape off %}
                         {{text.txt}}
                         {% endautoescape %}

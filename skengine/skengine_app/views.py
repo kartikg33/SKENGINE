@@ -9,13 +9,6 @@ from .models import Text, Image, Video, Link
 
 
 def editSketch(request):
-    text_list = Text.objects.all()
-    
-    num_frames = Text.objects.all().aggregate(Max('id'))['id__max']  
-    if len(text_list) == 0: #check for NaN
-        num_frames = 0
-
-    context = {'text_list': text_list, 'num_frames': num_frames}
     
     if request.method == 'POST':
 
@@ -46,5 +39,11 @@ def editSketch(request):
             frame = Text.objects.get(id=post_id)
             frame.delete()
 
+
+    text_list = Text.objects.all()
+    num_frames = Text.objects.all().aggregate(Max('id'))['id__max']  
+    if len(text_list) == 0: #check for NaN
+        num_frames = 0
+    context = {'text_list': text_list, 'num_frames': num_frames}
 
     return render(request, 'skengine_app/editSketch.html', context)

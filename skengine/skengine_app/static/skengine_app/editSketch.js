@@ -23,7 +23,35 @@ $(document).ready(function(){
 		});
 	});
 
+	// Get Session Cookie for Posting
+	function getCookie(name) {
+	    var cookieValue = null;
+	    if (document.cookie && document.cookie != '') {
+	        var cookies = document.cookie.split(';');
+	        for (var i = 0; i < cookies.length; i++) {
+	            var cookie = jQuery.trim(cookies[i]);
+	            // Does this cookie string begin with the name we want?
+	            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+	                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+	                break;
+	            }
+	        }
+	    }
+	    return cookieValue;
+	}
+	var csrftoken = getCookie('csrftoken');
 
+	function csrfSafeMethod(method) {
+	    // these HTTP methods do not require CSRF protection
+	    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+	}
+	$.ajaxSetup({
+	    beforeSend: function(xhr, settings) {
+	        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+	            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+	        }
+	    }
+	});
 	//----------EVENTS----------//
 
 	//RESIZE WINDOW
@@ -49,18 +77,15 @@ $(document).ready(function(){
 
 	// MOUSE EVENTS
 
-	// Variables to store Mouse Position
-	var currentMousePos = { x: 0, y: 0 };
-    $(document).mousemove(readMouse);
-
-    function readMouse(event) {
-        currentMousePos.x = event.pageX;
-        currentMousePos.y = event.pageY;
-    };
+	// Click away from any frame
+	$(document).click(function(){
+		if ($(".hovering").length==0){ 
+			deselect_all();
+		}
+	});
 
     // Hovering Over Frame
 	$(document).on("mouseover",".container",function() {
-		//$(".hovering").removeClass('hovering'); // All Others Not Hovering
 		$(this).addClass('hovering'); // Hovering
 	});
 
@@ -70,32 +95,38 @@ $(document).ready(function(){
 	});
 
 	// Selecting Frame
-	$(document).on("click", ".hovering", function(){
-		$(".selected").parent().css('z-index',0);
-		$(".selected").removeClass('selected'); // Deselects Other Frames
-		$(this).addClass('selected'); // Selects This Frame
-		$(this).parent().css('z-index',1);
+	$(document).on("click", ".hovering", function(event){
+		if(!event.shiftKey){
+			deselect_all();
+		}
+		select_frame($(this));
 	});
 
-    // Double Clicking on Page Adds Frame, On Hovering Deletes Frame
-	$(document).dblclick(function(){
-		// Deletes Selected Frame
-		if ($(".selected").length>0){
-			delete_frame(parseInt($(".selected").parent().attr('id')));
+	// Pressing Delete Key on Selected Deletes Frame
+	$(document).on("keydown", function(keydown_event){
+		console.log(keydown_event.which)
+		if(keydown_event.which == 8){ // Delete Key Down
+			delete_frame($(".selected"));
 			$(".selected").parent().remove();
-		} else if ($(".hovering").length==0){ // Else Creates New Frame*/
+		}
+	});
+
+    // Double Clicking on Page Adds Frame
+	$(document).dblclick(function(event){
+		// If not hovering over a frame
+		if ($(".hovering").length==0){ 
 			//Update No. Frames
 			numFrames = numFrames + 1;
 			//Create New HTML
 			jQuery("<div/>", {
 		    	id: numFrames
 			}).appendTo("body");
-			$("#"+numFrames).html('<div class = "container txt"><p>Enter Text</p></div>');
+			$("#"+numFrames).html('<div class = "container edit txt"><p>Enter Text</p></div>');
 			var newFrame = $("#"+numFrames);
 
 			//Calculate Position of New Frame
-			var left = currentMousePos.x-100;
-			var top = currentMousePos.y-100;
+			var left = event.pageX;
+			var top = event.pageY;
 
 			//Calculate Position from Centre
 			var posX = left - screen_centre.x + window_pos.x;
@@ -116,7 +147,7 @@ $(document).ready(function(){
 			}); 
 			//Update Body Data
 			$("body").attr('data-num-frames', numFrames);
-			save_frame(numFrames);
+			save_frame(newFrame.children()); //need to pass container through
 		} //end else
 	});  
 
@@ -158,15 +189,30 @@ $(document).ready(function(){
 	// Stop Dragging Frame
 	$(document).on("mouseup",function(e) {
 		$(document).off("mousemove");
-		$(document).mousemove(readMouse);
 		$(".selected").css('cursor','auto');
-		save_frame(parseInt($(".selected").parent().attr('id')));
-		$(".selected").parent().css('z-index',0);
-		$(".selected").removeClass('selected');
+		save_frame($(".selected"));
 	});	
 
-	function save_frame(frame){
-		if(!isNaN(frame)){
+	function select_frame(frame){
+		frame.addClass('selected'); // Selects This Frame
+		frame.parent().css('z-index',1);
+	};
+
+	function deselect_frame(frame){
+		frame.parent().css('z-index',0);
+		frame.removeClass('selected'); 
+	};
+
+	// Deselects All Frames
+	function deselect_all(){
+		$(".selected").parent().css('z-index',0);
+		$(".selected").removeClass('selected'); 
+	};
+
+	function save_frame(selected){
+		//saves each selected element
+		selected.each(function(){ 
+			var frame = parseInt($(this).parent().attr('id'));
 			console.log("Saving Frame " + frame)	
 			$.ajax({
 				url: ".",
@@ -181,53 +227,24 @@ $(document).ready(function(){
 					text: $("#"+frame+" .txt").html()
 				},
 			});	
-		}
-	};
-
-	function delete_frame(frame){
-		console.log("Deleting Frame " + frame)	
-		$.ajax({
-			url: ".",
-			type: 'POST',
-			data: {
-				task: "delete",
-				id: frame, 
-			},
 		});
 	};
 
-
-
-	function getCookie(name) {
-	    var cookieValue = null;
-	    if (document.cookie && document.cookie != '') {
-	        var cookies = document.cookie.split(';');
-	        for (var i = 0; i < cookies.length; i++) {
-	            var cookie = jQuery.trim(cookies[i]);
-	            // Does this cookie string begin with the name we want?
-	            if (cookie.substring(0, name.length + 1) == (name + '=')) {
-	                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-	                break;
-	            }
-	        }
-	    }
-	    return cookieValue;
-	}
-	var csrftoken = getCookie('csrftoken');
-
-	function csrfSafeMethod(method) {
-	    // these HTTP methods do not require CSRF protection
-	    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-	}
-	$.ajaxSetup({
-	    beforeSend: function(xhr, settings) {
-	        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-	            xhr.setRequestHeader("X-CSRFToken", csrftoken);
-	        }
-	    }
-	});
-
-
+	function delete_frame(selected){
+		//deletes each selected element
+		selected.each(function(){ 
+			var frame = parseInt($(this).parent().attr('id'));
+			console.log("Deleting Frame " + frame)	
+			$.ajax({
+				url: ".",
+				type: 'POST',
+				data: {
+					task: "delete",
+					id: frame, 
+				},
+			});
+		});
+	};
 
 	
 });
