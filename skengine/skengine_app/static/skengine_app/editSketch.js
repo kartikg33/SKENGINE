@@ -154,36 +154,42 @@ $(document).ready(function(){
 
 	// Start Dragging Frame
 	$(document).on("mousedown",".selected",function(e) {
-		var dragging=$(this);	//to prevent other elements from being moved
-		var position = $(this).offset();
-		dragging.css('cursor','move');
-	
-		$(document).on("mousemove",function(event){
+		var dragging=$(".selected");	//to prevent other elements from being moved
+		console.log(dragging)
 
-			var move_left = position.left + event.pageX - e.pageX;
-			var move_top = position.top + event.pageY - e.pageY;
+		dragging.each(function(){
 
-			//Set new position
-			dragging.parent().css({	//only moves what is being dragged, not others by accident.
-				'left': move_left,
-				'top': 	move_top,
-			}); 
-			//Calculate and set new Position from Centre
-			var posX = move_left - screen_centre.x + window_pos.x;
-			var posY = move_top - screen_centre.y + window_pos.y;
-			dragging.parent().attr({
-				'data-centre-x': posX,
-				'data-centre-y': posY
-			});
+			var position = $(this).offset();
+			$(this).css('cursor','move');
+					
+			$(document).on("mousemove",function(event){
 
-			// DEBUG TEXT
-			$('.debug').text('DEBUG pos: '+position.left+', '+position.top+'; '+
-				'click: '+e.pageX+', '+e.pageY+'; '+
-				'current: '+event.pageX+', '+event.pageY+'; '+
-				'new_pos: '+move_left+', '+move_top	+'; '+
-				dragging.parent().attr('id') 
-			);
-		});	
+				var move_left = position.left + event.pageX - e.pageX;
+				var move_top = position.top + event.pageY - e.pageY;
+
+				//Set new position
+				 $(this).parent().css({	//only moves what is being dragged, not others by accident.
+					'left': move_left,
+					'top': 	move_top,
+				}); 
+				//Calculate and set new Position from Centre
+				var posX = move_left - screen_centre.x + window_pos.x;
+				var posY = move_top - screen_centre.y + window_pos.y;
+				 $(this).parent().attr({
+					'data-centre-x': posX,
+					'data-centre-y': posY
+				});
+
+				// DEBUG TEXT
+				$('.debug').text('DEBUG pos: '+position.left+', '+position.top+'; '+
+					'click: '+e.pageX+', '+e.pageY+'; '+
+					'current: '+event.pageX+', '+event.pageY+'; '+
+					'new_pos: '+move_left+', '+move_top	+'; '+
+					 $(this).parent().attr('id') 
+				);
+			});	
+
+		});
 	});
 
 	// Stop Dragging Frame
