@@ -75,12 +75,21 @@ $(document).ready(function(){
 		});
 	});
 
+
 	// MOUSE EVENTS
 
 	// Click away from any frame
-	$(document).click(function(){
+	$(document).live("click",function(){
 		if ($(".hovering").length==0){ 
-			deselect_all();
+			console.log("click not hovering")
+			console.log($(".editing").length)
+			if ($(".editing").length>0){
+				console.log("kill the edits")
+				finishEditingText();
+			} else {
+				console.log("kill the selected")
+				deselect_all();
+			}
 		}
 	});
 
@@ -102,12 +111,25 @@ $(document).ready(function(){
 		select_frame($(this));
 	});
 
-	// Pressing Delete Key on Selected Deletes Frame
+	// Checking for Key Presses
 	$(document).on("keydown", function(keydown_event){
-		console.log(keydown_event.which)
+		// Pressing Delete Key on Selected Deletes Frame
 		if(keydown_event.which == 8){ // Delete Key Down
-			delete_frame($(".selected"));
-			$(".selected").parent().remove();
+			keydown_event.preventDefault();
+			$(".selected").each(function(){
+				if(!$(this).hasClass('editing')){
+					delete_frame($(this));
+					$(this).parent().remove();
+				}
+			});	
+		}
+		console.log(keydown_event.which)
+		if(keydown_event.which == 13){
+			keydown_event.preventDefault();
+			if ($(".editing").length>0){
+				console.log("kill the edits")
+				finishEditingText();
+			}
 		}
 	});
 
@@ -153,19 +175,22 @@ $(document).ready(function(){
 
 
 	// Start Dragging Frame
-	$(document).on("mousedown",".selected",function(e) {
-		var dragging=$(".selected");	//to prevent other elements from being moved
-		console.log(dragging)
+	//$(document).on("mousedown",".selected",function(e) {
+	$(".selected").live("mousedown", function(e){	
+		var dragging=$(".selected"); // move all selected elements
 
-		dragging.each(function(){
-
-			var position = $(this).offset();
-			$(this).css('cursor','move');
+		// find initial position of each selected element
+		var position = [];
+		dragging.each(function(index){
+			position.push($(this).offset());
+		});
 					
-			$(document).on("mousemove",function(event){
-
-				var move_left = position.left + event.pageX - e.pageX;
-				var move_top = position.top + event.pageY - e.pageY;
+		$(document).on("mousemove",function(event){
+			dragging.each(function(index){ // for each selected element
+				$(this).css('cursor','move');
+				// Find new position
+				var move_left = position[index].left + event.pageX - e.pageX;
+				var move_top = position[index].top + event.pageY - e.pageY;
 
 				//Set new position
 				 $(this).parent().css({	//only moves what is being dragged, not others by accident.
@@ -199,6 +224,46 @@ $(document).ready(function(){
 		save_frame($(".selected"));
 	});	
 
+
+	// EDITING CONTENT
+
+	// Edit text in place
+	$(".selected.edit").live("dblclick", editText);
+
+	// Select all text on focus
+	$(".editBox").focus(function(event) {
+		this.select();
+	});
+
+
+	// FUNCTIONS!!!
+
+	function editText(){
+		$(".selected.edit").off('dblclick', editText);
+		console.log("replacing text")
+		if(!$(this).hasClass('editing')){
+			oldText = $(this).html();
+			oldText.replace("\"", "\\\"");
+			//$(this).html("");
+			$(this).html("<form><input type=\"text\" class=\"editBox\" value=\""+ oldText + "\"/></form>");
+		}
+		$(this).addClass('editing');
+		$(".editBox").focus(); // gains focus
+	};
+
+	function finishEditingText(){
+		$(".editBox").blur(); // loses focus
+		console.log("killing edits")
+		newText = $(".editing").children("form").children('.editBox').val();
+		newText.replace("\"", "\\\"");
+		console.log(newText)
+		$(".editing").html(newText);
+		$(".editing").removeClass('editing');
+		$(".selected.edit").live("dblclick", editText);
+	};
+
+
+
 	function select_frame(frame){
 		frame.addClass('selected'); // Selects This Frame
 		frame.parent().css('z-index',1);
@@ -219,7 +284,6 @@ $(document).ready(function(){
 		//saves each selected element
 		selected.each(function(){ 
 			var frame = parseInt($(this).parent().attr('id'));
-			console.log("Saving Frame " + frame)	
 			$.ajax({
 				url: ".",
 				type: 'POST',
