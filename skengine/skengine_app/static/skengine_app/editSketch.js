@@ -115,7 +115,6 @@ $(document).ready(function(){
 	$(document).on("keydown", function(keydown_event){
 		// Pressing Delete Key on Selected Deletes Frame
 		if(keydown_event.which == 8){ // Delete Key Down
-			keydown_event.preventDefault();
 			$(".selected").each(function(){
 				if(!$(this).hasClass('editing')){
 					delete_frame($(this));
@@ -143,7 +142,7 @@ $(document).ready(function(){
 			jQuery("<div/>", {
 		    	id: numFrames
 			}).appendTo("body");
-			$("#"+numFrames).html('<div class = "container edit txt"><p>Enter Text</p></div>');
+			$("#"+numFrames).html('<div class = "container edit"><p>Enter Text</p></div>');
 			var newFrame = $("#"+numFrames);
 
 			//Calculate Position of New Frame
@@ -241,14 +240,14 @@ $(document).ready(function(){
 	function editText(){
 		$(".selected.edit").off('dblclick', editText);
 		console.log("replacing text")
-		if(!$(this).hasClass('editing')){
+		if($(".editing").length==0){
 			oldText = $(this).html();
 			oldText.replace("\"", "\\\"");
 			//$(this).html("");
 			$(this).html("<form><input type=\"text\" class=\"editBox\" value=\""+ oldText + "\"/></form>");
+			$(this).addClass('editing');
 		}
-		$(this).addClass('editing');
-		$(".editBox").focus(); // gains focus
+		$(".editBox").focus(); // gains focus - alerts user if they attempt to click another
 	};
 
 	function finishEditingText(){
@@ -258,6 +257,7 @@ $(document).ready(function(){
 		newText.replace("\"", "\\\"");
 		console.log(newText)
 		$(".editing").html(newText);
+		//save_frame($(".editing"));
 		$(".editing").removeClass('editing');
 		$(".selected.edit").live("dblclick", editText);
 	};
@@ -284,6 +284,7 @@ $(document).ready(function(){
 		//saves each selected element
 		selected.each(function(){ 
 			var frame = parseInt($(this).parent().attr('id'));
+			console.log(frame)
 			$.ajax({
 				url: ".",
 				type: 'POST',
@@ -294,7 +295,7 @@ $(document).ready(function(){
 					posY: $("#"+frame).attr('data-centre-y'),
 					width: $("#"+frame).width(),
 					height: $("#"+frame).height(),
-					text: $("#"+frame+" .txt").html()
+					text: $("#"+frame+" .container").html()
 				},
 			});	
 		});
