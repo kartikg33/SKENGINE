@@ -142,7 +142,7 @@ $(document).ready(function(){
 			jQuery("<div/>", {
 		    	id: numFrames
 			}).appendTo("body");
-			$("#"+numFrames).html('<div class = "container edit"><p>Enter Text</p></div>');
+			$("#"+numFrames).html('<div class = "container edit">Enter Text</div>');
 			var newFrame = $("#"+numFrames);
 
 			//Calculate Position of New Frame
