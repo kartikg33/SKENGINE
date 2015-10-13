@@ -76,6 +76,7 @@ $(document).ready(function(){
 	});
 
 
+
 	// MOUSE EVENTS
 
 	// Click away from any frame
@@ -226,7 +227,7 @@ $(document).ready(function(){
 
 	// EDITING CONTENT
 
-	$(".edit").jqte();
+	//$(".edit").jqte();
 
 	// Edit text in place
 	//$(".selected.edit").live("dblclick", editText);
