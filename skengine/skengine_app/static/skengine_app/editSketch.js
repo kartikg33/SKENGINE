@@ -226,8 +226,10 @@ $(document).ready(function(){
 
 	// EDITING CONTENT
 
+	$(".edit").jqte();
+
 	// Edit text in place
-	$(".selected.edit").live("dblclick", editText);
+	//$(".selected.edit").live("dblclick", editText);
 
 	// Select all text on focus
 	$(".editBox").focus(function(event) {

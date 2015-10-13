@@ -9,7 +9,13 @@
         {% load staticfiles %}
         <link rel="stylesheet" type="text/css" href="{% static 'skengine_app/editSketch.css' %}">
         <!--<script src="{% static 'skengine_app/jeditable.js' %}"></script>-->
-        <script src="{% static 'skengine_app/editSketch.js' %}"></script>
+
+        <!-- CONTROLLER -->
+        <script type="text/javascript" src="{% static 'skengine_app/editSketch.js' %}"></script>
+
+        <!-- jQueryTE -->
+        <script type="text/javascript" src="{% static 'skengine_app/jQuery-TE_v.1.4.0/jquery-te-1.4.0.min.js' %}"></script>
+        <link type="text/css" rel="stylesheet" href="{% static 'skengine_app/jQuery-TE_v.1.4.0/jquery-te-1.4.0.css' %}">
         
     </head>
 
@@ -21,7 +27,7 @@
         {% if text_list %}
             {% for text in text_list %}
                 <div id="{{text.id}}" data-centre-x= "{{text.pos_from_centre_X}}" data-centre-y= "{{text.pos_from_centre_Y}}" style="width: {{text.width}}px; height: {{text.height}}px; left: 0px; top: 0px; z-index:0; position: fixed">
-                    <div class = "container edit">
+                    <div class = "container edit textEdit">
                         {% autoescape off %}
                         {{text.txt}}
                         {% endautoescape %}
